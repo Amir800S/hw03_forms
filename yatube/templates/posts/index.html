@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Последние обновления на сайте{% endblock %}
+{% block content %}
+
+{% for post in posts %}
+<article>
+  <ul>
+    <li>
+      Автор: {{ post.author.get_full_name }}
+    </li>
+    <li>
+      Дата публикации: {{ post.pub_date|date:"d E Y" }}
+    </li>
+  </ul>
+  <p>
+    {{ post.text|linebreaksbr }}
+  </p>    
+  {% if post.group %}   
+    <a href="{% url 'posts:group_list' post.group.slug %}">
+      все записи группы
+    </a>
+  {% else %}
+    <span style='color: red'>
+      Этой публикации нет ни в одном сообществе.
+    </span>
+  {% endif %}
+</article>   
+{% if not forloop.last %}<hr>{% endif %}
+{% endfor %}
+
+{% include 'posts/includes/paginator.html' %}
+
+
+{% endblock %} 
