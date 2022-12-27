@@ -27,7 +27,7 @@
     <main>
       <div class="container py-5">        
         <h1>Все посты пользователя {{ user.username }} </h1>
-        <h3>Всего постов: {{ post.posts|length }}</h3>    
+        <h3>Всего постов: {{ posts|length }}</h3>    
         <article>
           {% for post in posts %}
           <ul>

@@ -1,8 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.conf import settings
-from django.http import HttpResponseRedirect
 
 from .models import Post, Group
 from .forms import PostForm
@@ -65,16 +64,14 @@ def post_detail(request, post_id):
 @login_required
 def post_create(request):
     if request.method == 'POST':
-        form = PostForm()
+        form = PostForm(request.POST)
         if form.is_valid():
-            form.text = form.cleaned_data['text']
-            form.group = form.cleaned_data['group']
-            form = PostForm()
             post = form.save(commit=False)
             post.author = request.user
             post.save()
+            user = request.user
 
-            return redirect('/profile/<str:username>/')
+            return redirect(f'/profile/{user.username}/')
 
         return render(request, 'posts/profile.html', {'form': form})
 
@@ -86,16 +83,14 @@ def post_create(request):
 @login_required
 def post_edit(request, post_id):
     post = Post.objects.get(id=post_id)
-    if request.user != post.author:
-        return redirect('posts/<int:post_id>/')
     if request.method == 'POST':
         post_edited = PostForm(instance=post, data=request.POST)
         post_edited.save(commit=False)
         post_edited.author = request.user
         post_edited.save()
-        return redirect('/posts/<int:post_id>/')
+        return redirect(f'/posts/{post_id}/')
 
-    form = PostForm(instance=post, data=request.POST)
+    form = PostForm(instance=post)
     is_edit = 'is_edit'
     contex = {
         'post': post,
