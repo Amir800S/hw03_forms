@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.conf import settings
+from django.http import HttpResponseRedirect
 
 from .models import Post, Group
 from .forms import PostForm
@@ -30,6 +31,7 @@ def group_posts(request, slug):
     context = {
         'page_obj': page_obj,
         'posts': post_list,
+        'group': group_with_slug,
 
     }
     return render(request, 'posts/group_list.html', context)
@@ -62,17 +64,19 @@ def post_detail(request, post_id):
 
 @login_required
 def post_create(request):
-
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm()
         if form.is_valid():
             form.text = form.cleaned_data['text']
             form.group = form.cleaned_data['group']
-            form.save()
+            form = PostForm()
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
 
-            return redirect('profile/<username>')
+            return redirect('/profile/<str:username>/')
 
-        return render(request, 'profile/<username>', {'form': form})
+        return render(request, 'posts/profile.html', {'form': form})
 
     form = PostForm()
 
@@ -82,12 +86,20 @@ def post_create(request):
 @login_required
 def post_edit(request, post_id):
     post = Post.objects.get(id=post_id)
+    if request.user != post.author:
+        return redirect('posts/<int:post_id>/')
     if request.method == 'POST':
-        form = PostForm(instance=post)
-    else:
-        form = PostForm(instance=post, data=request.POST)
+        post_edited = PostForm(instance=post, data=request.POST)
+        post_edited.save(commit=False)
+        post_edited.author = request.user
+        post_edited.save()
+        return redirect('/posts/<int:post_id>/')
 
+    form = PostForm(instance=post, data=request.POST)
+    is_edit = 'is_edit'
     contex = {
+        'post': post,
         'form': form,
+        'is_edit': is_edit
     }
     return render(request, 'posts/update_post.html', contex)
