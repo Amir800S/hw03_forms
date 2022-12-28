@@ -1,65 +1,13 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ru"> 
-  <head>  
-    <meta charset="utf-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" src="{% static 'img/fav/fav.ico' %}" type="image">
-    <link rel="apple-touch-icon" sizes="180x180" src="{% static 'img/fav/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" src="{% static 'img/fav/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" src="{% static 'img/fav/favicon-16x16.png' %}">
-    <meta name="msapplication-TileColor" content="#000">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"> 
-    <title>Профайл пользователя {{ user.username }}</title>  
-  </head>
-  <body>       
-    <header>
-      <nav class="navbar navbar-light" style="background-color: lightskyblue">
-        <div class="container">
-          <a class="navbar-brand" href="/">
-            <img src="/static/img/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
-            <span style="color:red">Ya</span>tube
-          </a>
-        </div>
-      </nav>      
-    </header>
-    <main>
-      <div class="container py-5">        
-        <h1>Все посты пользователя {{ user.username }} </h1>
-        <h3>Всего постов: {{ posts|length }}</h3>    
-        <article>
-          {% for post in posts %}
-          <ul>
-            <li>
-              Автор: {{ user.username }}
-              <a href="<!-- -->">все посты пользователя</a>
-            </li>
-            <li>
-              Дата публикации: {{ post.pub_date }} 
-            </li>
-          </ul>
-          <p>
-            {{ post.text }}
-          </p>
-          <a href="{% url 'posts:post_detail' post.id %}">подробная информация </a>
-          {% if post.group %}   
-            <a href="{% url 'posts:group_list' post.group.slug %}">
-              все записи группы
-            </a>
-          {% else %}
-            <span style='color: red'>
-              Этой публикации нет ни в одном сообществе.
-            </span>
-          {% endif %}
-          </article>   
-          {% if not forloop.last %}<hr>{% endif %}
-          {% endfor %}             
-        {% include 'posts/includes/paginator.html' %}
-      </div>
-    </main>
-    <footer class="border-top text-center py-3">
-      <p>© {{ year }} Copyright <span style="color:red">Ya</span>tube</p>    
-    </footer>
-  </body>
-</html>  
+{% extends "base.html" %}
+{% block title %}Профайл пользователя {{ usermodel.username }}{% endblock %}
+{% block content %}
+{% for post in page_obj %}
+{% include 'posts/includes/postcard.html' %}
+{% if not forloop.last %}<hr>{% endif %}
+{% endfor %}
+
+
+{% include 'posts/includes/paginator.html' %}
+
+
+{% endblock %} 

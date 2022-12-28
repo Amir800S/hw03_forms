@@ -13,7 +13,7 @@ class Group(models.Model):
     class Meta:
         verbose_name = 'Группы'
         verbose_name_plural = 'Группы'
-        ordering = ('-id',)
+        ordering = ('-title',)
 
     def __str__(self):
         return self.title

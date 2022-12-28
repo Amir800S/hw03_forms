@@ -1,35 +1,26 @@
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
-from django.conf import settings
+from django.shortcuts import get_object_or_404, render, redirect
 
-from .models import Post, Group
+from .models import Group, Post, User
 from .forms import PostForm
-from django.contrib.auth.models import User
+from .utils import paginator
 
 
 def index(request):
-    post_list = Post.objects.all()
-    paginator = Paginator(post_list, settings.POSTS_ON_MAIN)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    post_list = Post.objects.select_related('author').all()
+    page_obj = paginator(request, post_list)
     context = {
         'page_obj': page_obj,
-        'posts': post_list,
     }
     return render(request, 'posts/index.html', context)
 
 
 def group_posts(request, slug):
-    group_with_slug = Group.objects.get(slug=slug)
-    post_list = Group.objects.filter(slug=group_with_slug)
-
-    paginator = Paginator(post_list, settings.POSTS_ON_MAIN)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    group_with_slug = get_object_or_404(Group, slug=slug)
+    post_list = Post.objects.select_related('group').all()
+    page_obj = paginator(request, post_list)
     context = {
         'page_obj': page_obj,
-        'posts': post_list,
         'group': group_with_slug,
 
     }
@@ -37,16 +28,13 @@ def group_posts(request, slug):
 
 
 def profile(request, username):
-    user = User.objects.get(username=username)
-    post_list = Post.objects.filter(author=user)
-
-    paginator = Paginator(post_list, settings.POSTS_ON_MAIN)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    user_of_profile = get_object_or_404(User, username=username)
+    post_list = Post.objects.filter(author=user_of_profile
+                                    ).select_related('author').all()
+    page_obj = paginator(request, post_list)
     context = {
         'page_obj': page_obj,
-        'posts': post_list,
-        'usermodel': user,
+        'usermodel': user_of_profile,
 
     }
 
@@ -54,9 +42,9 @@ def profile(request, username):
 
 
 def post_detail(request, post_id):
-    onepost = Post.objects.get(id=post_id)
+    viewed_post = Post.objects.filter(id=post_id)
     context = {
-        'onepost': onepost,
+        'onepost': viewed_post,
     }
     return render(request, 'posts/post_detail.html', context)
 
@@ -69,9 +57,8 @@ def post_create(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            user = request.user
 
-            return redirect(f'/profile/{user.username}/')
+            return redirect('posts:profile', username=request.user.username)
 
         return render(request, 'posts/profile.html', {'form': form})
 
@@ -82,19 +69,14 @@ def post_create(request):
 
 @login_required
 def post_edit(request, post_id):
-    post = Post.objects.get(id=post_id)
+    post = get_object_or_404(Post, id=post_id)
     if request.method == 'POST':
         post_edited = PostForm(instance=post, data=request.POST)
-        post_edited.save(commit=False)
-        post_edited.author = request.user
         post_edited.save()
-        return redirect(f'/posts/{post_id}/')
+        return redirect('posts:post_detail', post_id=post_id)
 
     form = PostForm(instance=post)
-    is_edit = 'is_edit'
     contex = {
-        'post': post,
         'form': form,
-        'is_edit': is_edit
     }
-    return render(request, 'posts/update_post.html', contex)
+    return render(request, 'posts/create_post.html', contex)
