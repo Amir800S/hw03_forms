@@ -7,7 +7,7 @@ from .utils import paginator
 
 
 def index(request):
-    post_list = Post.objects.select_related('author').all()
+    post_list = Post.objects.select_related('author', 'group').all()
     page_obj = paginator(request, post_list)
     context = {
         'page_obj': page_obj,
@@ -17,7 +17,7 @@ def index(request):
 
 def group_posts(request, slug):
     group_with_slug = get_object_or_404(Group, slug=slug)
-    post_list = Post.objects.select_related('group').all()
+    post_list = group_with_slug.posts.select_related('author').all()
     page_obj = paginator(request, post_list)
     context = {
         'page_obj': page_obj,
@@ -29,12 +29,13 @@ def group_posts(request, slug):
 
 def profile(request, username):
     user_of_profile = get_object_or_404(User, username=username)
-    post_list = Post.objects.filter(author=user_of_profile
-                                    ).select_related('author').all()
+    post_list = user_of_profile.posts.filter(author=user_of_profile
+                                             ).select_related('group').all()
     page_obj = paginator(request, post_list)
     context = {
         'page_obj': page_obj,
         'usermodel': user_of_profile,
+        'post_list': post_list,
 
     }
 
@@ -42,9 +43,11 @@ def profile(request, username):
 
 
 def post_detail(request, post_id):
-    viewed_post = Post.objects.filter(id=post_id)
+    get_post = get_object_or_404(Post, id=post_id)
+    onepost = get_post
     context = {
-        'onepost': viewed_post,
+        'onepost': onepost,
+
     }
     return render(request, 'posts/post_detail.html', context)
 
@@ -57,7 +60,6 @@ def post_create(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-
             return redirect('posts:profile', username=request.user.username)
 
         return render(request, 'posts/profile.html', {'form': form})
@@ -70,6 +72,8 @@ def post_create(request):
 @login_required
 def post_edit(request, post_id):
     post = get_object_or_404(Post, id=post_id)
+    if post.author != request.user:
+        return redirect('posts:post_detal', post_id=post_id)
     if request.method == 'POST':
         post_edited = PostForm(instance=post, data=request.POST)
         post_edited.save()

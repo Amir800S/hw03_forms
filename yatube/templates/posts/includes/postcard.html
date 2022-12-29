@@ -1,33 +1,32 @@
 <article>
-    <ul>
-      <li>
-        {% with request.resolver_match.view_name as view_name %}  
-        {% if view_name  == 'posts:profile' %}
-        {{ post.author }}
-        {% else %}
-        <a href="{% url 'posts:profile' post.author %}">
-          Автор: {{ post.author }}
-        </a>
-        {% endif %}
-      </li>
-      <li>
-        Дата публикации: {{ post.pub_date|date:"d E Y" }}
-      </li>
-    </ul>
-    <p>
-        {{ post.text|linebreaksbr }}
-    </p>
-    {% if view_name  == 'posts:post_detail' %}
-      <a href="{% url 'posts:post_detail' post.id %}">подробная информация</a>
+  <ul>
+    <li>
+      <a>
+        Автор: {{ post.author }}
+      </a>
+    </li>
+    <li>
+      Дата публикации: {{ post.pub_date|date:"d E Y" }}
+    </li>
+    {% if index == True %} 
+    <li>
+      <a href="{% url 'posts:profile' post.author %}">все посты пользователя</a>
+    </li>
+    {% else%}
     {% endif %}
-    {% if post.group %}   
+  </ul>
+  <p>
+    {{ post.text|linebreaksbr }}
+  </p>
+    <a href="{% url 'posts:post_detail' post.id %}">подробная информация</a>
+    {% if group  == False %}
     <a href="{% url 'posts:group_list' post.group.slug %}">
+      {% else %}
+    <a>
       все записи группы
     </a> 
-    {% else %}
+    {% endif %}
     <span style='color: red'>
       Этой публикации нет ни в одном сообществе.
     </span>
-    {% endif %}
-    {% endwith %} 
   </article>

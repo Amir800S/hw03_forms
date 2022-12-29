@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block header %}{{ group.title }}{% endblock %}
+{% block title %}{{ group.title }}{% endblock %}
 
 {% block content %}
   <div class="container py-5">
@@ -8,13 +8,9 @@
       {{ group.title }} 
     </h1>
     <p>{{ group.description|linebreaksbr }}</p>
-    {% for post in posts %}
-      {% include 'posts/includes/postcard.html' %}
+    {% for post in page_obj %}
+      {% include 'posts/includes/postcard.html' with group=True %}
         {% if not forloop.last %}<hr>{% endif %}
     {% endfor %} 
   </div>  
-{% for post in page_obj %}
-{% include 'posts/includes/postcard.html' %}
-{% if not forloop.last %}<hr>{% endif %}
-{% endfor %}
 {% endblock %} 
