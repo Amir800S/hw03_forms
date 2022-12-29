@@ -8,7 +8,7 @@
     <li>
       Дата публикации: {{ post.pub_date|date:"d E Y" }}
     </li>
-    {% if index == True %} 
+    {% if not profile %} 
     <li>
       <a href="{% url 'posts:profile' post.author %}">все посты пользователя</a>
     </li>
@@ -19,14 +19,15 @@
     {{ post.text|linebreaksbr }}
   </p>
     <a href="{% url 'posts:post_detail' post.id %}">подробная информация</a>
-    {% if group  == False %}
-    <a href="{% url 'posts:group_list' post.group.slug %}">
+    {% if not group_page %}
+      {% if post.group %}  
+        <a href="{% url 'posts:group_list' post.group.slug %}">
+          <a> все записи группы </a> 
       {% else %}
-    <a>
-      все записи группы
-    </a> 
+      <span style='color: red'>
+        Этой публикации нет ни в одном сообществе.
+      </span>
+      {% endif %}
+      {% else %}
     {% endif %}
-    <span style='color: red'>
-      Этой публикации нет ни в одном сообществе.
-    </span>
   </article>

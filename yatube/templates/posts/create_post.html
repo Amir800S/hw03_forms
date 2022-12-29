@@ -1,5 +1,11 @@
 {% extends "base.html" %}
-{% block title %} Новый пост {% endblock%}
+{% block title %} 
+{% if form.instance.id %}       
+  Редактировать пост
+{% else %}
+  Новый пост
+{% endif %} 
+{% endblock%}
 {% block content %}
     <div class="container py-5">
       <div class="row justify-content-center">
@@ -13,14 +19,14 @@
               {% endif %}                
             </div>
             <div class="card-body">
-            {% include 'posts/includes/error_form.html' %}
-            {% if form.instance.id %}        
-            <form method="POST"  action="{% url 'posts:post_edit' form.instance.id %}">
-            {% else %}
-            <form method="POST"  action="{% url 'posts:post_create' %}">
-            {% endif %}
-                {% csrf_token %}
-                {% include 'posts/includes/form.html' %}
+              {% include 'includes/error_form.html' %}
+              {% if form.instance.id %}        
+                <form method="POST"  action="{% url 'posts:post_edit' form.instance.id %}">
+              {% else %}
+                <form method="POST"  action="{% url 'posts:post_create' %}">
+              {% endif %}
+              {% csrf_token %}
+              {% include 'includes/form.html' %}
                 <div class="d-flex justify-content-end">
                   <button type="submit" value="Submit" class="btn btn-primary">
                     {% if form.instance.id %}
