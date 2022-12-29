@@ -73,7 +73,7 @@ def post_create(request):
 def post_edit(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     if post.author != request.user:
-        return redirect('posts:post_detal', post_id=post_id)
+        return redirect('posts:post_detail', post_id=post_id)
     if request.method == 'POST':
         post_edited = PostForm(instance=post, data=request.POST)
         post_edited.save()
