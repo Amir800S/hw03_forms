@@ -8,12 +8,12 @@
         Дата публикации: {{ onepost.pub_date }}
       </li>
       {% if onepost.group %}
-      <li class="list-group-item">
-        Группа: {{ onepost.group.title }}
-        <a href="{% url 'posts:group_list' onepost.group.slug %}">
-          все записи группы
-        </a>
-      </li>
+        <li class="list-group-item">
+          Группа: {{ onepost.group.title }}
+          <a href="{% url 'posts:group_list' onepost.group.slug %}">
+            все записи группы
+          </a>
+        </li>
       {% else %}
       <span style='color: red'>
         Этой публикации нет ни в одном сообществе.
