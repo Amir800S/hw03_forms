@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}
-  {% if form.instance.id %}
-    Редактировать пост
-  {% else %}
-    Новый пост
-  {% endif %}
+{% if form.instance.id %}
+Редактировать пост
+{% else %}
+Новый пост
+{% endif %}
 {% endblock%}
 {% block content %}
 <div class="container py-5">
@@ -21,18 +21,18 @@
         <div class="card-body">
           {% include 'includes/error_form.html' %}
           {% if form.instance.id %}
-          <form method="POST" action="{% url 'posts:post_edit' form.instance.id %}">
-            {% else %}
+            <form method="POST" action="{% url 'posts:post_edit' form.instance.id %}">
+          {% else %}
             <form method="POST" action="{% url 'posts:post_create' %}">
-              {% endif %}
-              {% csrf_token %}
-              {% include 'includes/form.html' %}
+          {% endif %}
+            {% csrf_token %}
+            {% include 'includes/form.html' %}
               <div class="d-flex justify-content-end">
                 <button type="submit" value="Submit" class="btn btn-primary">
                   {% if form.instance.id %}
-                  Добавить
+                    Добавить
                   {% else %}
-                  Сохранить
+                    Сохранить
                   {% endif %}
                 </button>
               </div>
