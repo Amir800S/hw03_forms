@@ -53,7 +53,7 @@ def post_detail(request, post_id):
 
 @login_required
 def post_create(request):
-    """ Страница создания поста """
+    """ Функция создания поста """
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():  # Валидация формы создания поста
