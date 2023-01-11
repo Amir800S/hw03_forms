@@ -1,4 +1,4 @@
-from django.contrib.auth.views import PasswordResetView
+from django.contrib.auth.views import PasswordResetView, LoginView
 from django.urls import path
 
 from . import views
@@ -12,9 +12,9 @@ urlpatterns = [
     path('signup/',
          views.SignUp.as_view(template_name='users/signup.html'),
          name='signup'),
-    path('login/', views.LoginView.as_view(template_name='users/login.html'),
+    path('login/', LoginView.as_view(template_name='users/login.html'),
          name='login'),
     path('reset_password/', PasswordResetView.as_view(
          template_name='users/reset_password.html'),
          name='reset_password'),
-]
+]  # Роутинг запросов приложения Users

@@ -1,5 +1,7 @@
+<!-- Страница создания и редактирования постов-->
 {% extends "base.html" %}
 {% block title %}
+  <!-- Проверка наличия у поста id -->
   {% if form.instance.id %}
     Редактировать пост
   {% else %}
@@ -12,6 +14,7 @@
     <div class="col-md-8 p-5">
       <div class="card">
         <div class="card-header">
+          <!-- Проверка наличия у поста id -->
           {% if form.instance.id %}
             Редактировать пост
           {% else %}
@@ -29,6 +32,7 @@
             {% include 'includes/form.html' %}
               <div class="d-flex justify-content-end">
                 <button type="submit" value="Submit" class="btn btn-primary">
+                  <!-- Проверка наличия у поста id -->
                   {% if form.instance.id %}
                     Добавить
                   {% else %}

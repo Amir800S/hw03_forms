@@ -7,6 +7,7 @@ from .utils import paginator
 
 
 def index(request):
+    """ Главная страница """
     post_list = Post.objects.select_related('author', 'group').all()
     page_obj = paginator(request, post_list)
     context = {
@@ -16,6 +17,7 @@ def index(request):
 
 
 def group_posts(request, slug):
+    """ Страница группы """
     group_with_slug = get_object_or_404(Group, slug=slug)
     post_list = group_with_slug.posts.select_related('author').all()
     page_obj = paginator(request, post_list)
@@ -27,6 +29,7 @@ def group_posts(request, slug):
 
 
 def profile(request, username):
+    """ Страница автора поста """
     user_of_profile = get_object_or_404(User, username=username)
     post_list = user_of_profile.posts.select_related('group').all()
     page_obj = paginator(request, post_list)
@@ -39,6 +42,7 @@ def profile(request, username):
 
 
 def post_detail(request, post_id):
+    """ Подробное чтение поста """
     get_post = get_object_or_404(Post, id=post_id)
     onepost = get_post
     context = {
@@ -49,9 +53,10 @@ def post_detail(request, post_id):
 
 @login_required
 def post_create(request):
+    """ Страница создания поста """
     if request.method == 'POST':
         form = PostForm(request.POST)
-        if form.is_valid():
+        if form.is_valid():  # Валидация формы создания поста
             post = form.save(commit=False)
             post.author = request.user
             post.save()
@@ -64,8 +69,9 @@ def post_create(request):
 
 @login_required
 def post_edit(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if post.author != request.user:
+    """ Редактирование поста """
+    post = get_object_or_404(Post, id=post_id)  # Получения поста
+    if post.author != request.user:  # Проверка прав для редактирования
         return redirect('posts:post_detail', post_id=post_id)
     if request.method == 'POST':
         post_edited = PostForm(instance=post, data=request.POST)

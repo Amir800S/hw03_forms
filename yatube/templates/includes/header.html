@@ -1,4 +1,5 @@
 {% load static %}
+<!-- Хедер -->
 <nav class="navbar navbar-light" style="background-color: lightskyblue">
   <div class="container">
     <a class="navbar-brand" href="{% url 'posts:index' %}">
@@ -6,6 +7,7 @@
       <span style="color:red">Ya</span>tube
     </a>
     <ul class="nav nav-pills">
+      <!-- Навигация по сайту -->
       {% with request.resolver_match.view_name as view_name %}  
       <li class="nav-item"> 
         <a class="nav-link {% if view_name  == 'about:author' %}active{% endif %}"
@@ -15,6 +17,7 @@
         <a class="nav-link {% if view_name  == 'about:tech' %}active{% endif %}" 
          href="{% url 'about:tech' %}">Технологии</a>
       </li>
+      <!-- Проверка авторизации пользователя -->
       {% if request.user.is_authenticated %}
       <li class="nav-item"> 
         <a class="nav-link {% if view_name  == 'posts:post_create' %}active{% endif %}"

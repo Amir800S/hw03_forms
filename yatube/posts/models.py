@@ -3,6 +3,7 @@ from django.db import models
 
 
 class Group(models.Model):
+    """ ORM модель групп """
     title = models.CharField('Название группы', max_length=200)
     slug = models.SlugField('URL адрес', default='some string',
                             unique=True)
@@ -11,6 +12,7 @@ class Group(models.Model):
                                    default='some string', )
 
     class Meta:
+        """ Отображение в админке """
         verbose_name = 'Группы'
         verbose_name_plural = 'Группы'
         ordering = ('-title',)
@@ -20,6 +22,7 @@ class Group(models.Model):
 
 
 class Post(models.Model):
+    """ ORM модель постов """
     text = models.TextField('Текст поста', max_length=15000)
     pub_date = models.DateTimeField('Дата публикации',
                                     auto_now_add=True)
@@ -32,6 +35,7 @@ class Post(models.Model):
                               verbose_name='Группа')
 
     class Meta:
+        """ Отображение в админке """
         ordering = ('-pub_date',)
         verbose_name_plural = 'Сортировка по дате публикации'
 
