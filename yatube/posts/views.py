@@ -36,6 +36,7 @@ def profile(request, username):
     context = {
         'page_obj': page_obj,
         'usermodel': user_of_profile,
+        'post_list': post_list  # Отображение числа постов пользователя
     }
 
     return render(request, 'posts/profile.html', context)
