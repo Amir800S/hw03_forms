@@ -93,7 +93,7 @@ POSTS_ON_MAIN = 10
 
 LOGIN_URL = 'users:login'
 LOGIN_REDIRECT_URL = 'posts:index'
-LOGOUT_REDIRECT_URL = 'posts:index'
+# LOGOUT_REDIRECT_URL = 'users:logout'
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
